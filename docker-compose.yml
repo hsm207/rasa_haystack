@@ -1,0 +1,47 @@
+version: "3"
+services:
+  haystack-api:
+    image: "deepset/haystack-cpu:latest"
+    ports:
+      - 8000:8000
+    environment:
+      # See rest_api/pipelines.yaml for configurations of Search & Indexing Pipeline.
+      - ELASTICSEARCHDOCUMENTSTORE_PARAMS_HOST=elasticsearch
+    restart: always
+    depends_on:
+      - elasticsearch
+    command: "/bin/bash -c 'sleep 15 && gunicorn rest_api.application:app -b 0.0.0.0 -k uvicorn.workers.UvicornWorker --workers 1 --timeout 180'"
+  elasticsearch:
+    image: "elasticsearch:7.9.2"
+    ports:
+      - 9200:9200
+    environment:
+      - discovery.type=single-node
+  haystack-ui:
+    image: "haystack_ui:latest"
+    ports:
+      - 8501:8501
+    environment:
+      - API_ENDPOINT=http://haystack-api:8000
+      - EVAL_FILE=eval_labels_example.csv
+  rasa-server:
+    image: rasa/rasa:2.8.5-full
+    ports: 
+      - 5005:5005
+    volumes:
+      - .:/app
+    entrypoint: sh
+    tty: true
+    depends_on:
+      - action-server
+
+  action-server:
+    image: rasa/rasa-sdk:2.8.2
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    volumes:
+      - ./actions:/app/actions
+    entrypoint: ["sh", "-c", "python -m debugpy --listen 0.0.0.0:5678 -m rasa_sdk --actions actions --auto-reload --debug"]
+    ports:
+      - 5678:5678
