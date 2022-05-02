@@ -18,7 +18,7 @@ services:
     environment:
       - discovery.type=single-node
   haystack-ui:
-    image: "haystack_ui:latest"
+    image: "deepset/haystack-streamlit-ui:latest"
     ports:
       - 8501:8501
     environment:

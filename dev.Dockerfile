@@ -6,7 +6,7 @@ RUN apt update && \
         make
 
 RUN pip install --no-cache-dir black \
-    farm-haystack==0.9.0 \
+    farm-haystack==1.3.0 \
     debugpy \
     jupyterlab \
     pytest \

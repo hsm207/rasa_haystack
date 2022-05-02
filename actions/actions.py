@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Text
 
 import requests
 import wikipedia
-from haystack.document_store.elasticsearch import ElasticsearchDocumentStore
+from haystack.document_stores import ElasticsearchDocumentStore
 from haystack.preprocessor.cleaning import clean_wiki_text
 from haystack.preprocessor.utils import convert_files_to_dicts
 from rasa_sdk import Action, Tracker
@@ -78,7 +78,7 @@ class ActionAnswerQuestion(Action):
 
         candidate_answers = r["answers"]
         
-        if candidate_answers and candidate_answers[0]["probability"] > 0.70:
+        if candidate_answers and candidate_answers[0]["score"] > 0.70:
             answer = candidate_answers[0]["answer"]
         else:
             answer = "I don't know the answer"

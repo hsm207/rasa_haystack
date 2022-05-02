@@ -1,12 +1,15 @@
 build-haystack:
-	`git clone --branch v0.9.0 --depth 1 https://github.com/deepset-ai/haystack.git || true` && \
-		cd haystack/rest_api/ && \
-		awk '{sub(/localhost/,"elasticsearch")}1' pipelines.yaml > pipelines.yaml.bk && \
-		cat pipelines.yaml.bk > pipelines.yaml && \
-		rm pipelines.yaml.bk && \
-		cd .. && \
+	`git clone --branch v1.3.0 --depth 1 https://github.com/deepset-ai/haystack.git || true` && \
+		cd haystack/rest_api/pipeline && \
+		awk '{sub(/localhost/,"elasticsearch")}1' pipelines.haystack-pipeline.yml > pipelines.haystack-pipeline.yml.bk && \
+		cat pipelines.haystack-pipeline.yml.bk > pipelines.haystack-pipeline.yml && \
+		rm pipelines.haystack-pipeline.yml.bk && \
+		cd ../.. && \
+		awk '{gsub("xpdf-tools-linux-4.03","xpdf-tools-linux-4.04")}1' Dockerfile > Dockerfile.bk && \
+		cat Dockerfile.bk > Dockerfile && \
+		rm Dockerfile.bk && \
 		awk '{sub(/#image: \"elasticsearch:7.9.2\"/,"image: \"elasticsearch:7.9.2\"")}1' docker-compose.yml > docker-compose.yml.bk && \
-		awk '{sub(/image: \"deepset\/elasticsearch-game-of-thrones\"/,"#image: \"deepset/elasticsearch-game-of-thrones\"")}1' docker-compose.yml.bk > docker-compose.yml && \
+		awk '{sub(/image: \"deepset\/elasticsearch-countries-and-capitals\"/,"#image: \"deepset\/elasticsearch-countries-and-capitals\"")}1' docker-compose.yml.bk > docker-compose.yml && \
 		rm docker-compose.yml.bk && \
 		docker-compose build
 
