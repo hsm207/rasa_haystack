@@ -15,3 +15,4 @@ This repository contains code to acompany my [The Fastest Way To Create An FAQ B
 4. Run `make train-bot`
 5. Run `make run-bot`
 6. Open [bot_ui.html](bot_ui.html) to talk to the bot
+7. Run `make clean` to cleanup
