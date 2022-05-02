@@ -25,3 +25,6 @@ run-bot:
 
 train-bot:
 	docker-compose -p faq exec rasa-server rasa train
+
+clean:
+	docker-compose -p faq down
