@@ -1,6 +1,7 @@
 import logging
 import tempfile
 from typing import Any, Dict, List, Text
+import urllib.request
 
 import requests
 import wikipedia
@@ -20,6 +21,12 @@ def get_wikipedia_articles(data_dir, topics=[]):
         with open(f"{data_dir}/{topic}.txt", "w") as f:
             f.write(article)
 
+def get_pdf_files(data_dir):
+    fileurls = ["https://arxiv.org/pdf/2107.07567.pdf", "https://arxiv.org/pdf/2108.11463.pdf"]
+    filenames = ["blenderbot.pdf", "bookings.pdf"]
+
+    for fileurl, filename in zip(fileurls, filenames):
+        urllib.request.urlretrieve(fileurl, f"{data_dir}/{filename}")
 
 def convert_articles_to_docs(data_dir):
     return convert_files_to_dicts(
@@ -42,10 +49,13 @@ class ActionAnswerQuestion(Action):
             logger.info(f"Saving wikipedia articles to {data_dir}")
             get_wikipedia_articles(data_dir, topics=self.topics)
 
-            logger.info("Converting wikipedia articles to documents ...")
+            logger.info(f"Downloading pdf articles to {data_dir}")
+            get_pdf_files(data_dir)
+
+            logger.info(f"Converting files in {data_dir} to haystack documents ...")
             docs = convert_articles_to_docs(data_dir)
 
-            logger.info("Writing documents to document store")
+            logger.info("Writing haystack documents to document store")
             self.doc_store.write_documents(docs)
 
     def _build_headers(self):
@@ -77,7 +87,8 @@ class ActionAnswerQuestion(Action):
         r = self._get_answer(question)
 
         candidate_answers = r["answers"]
-        
+        logging.info(f"Candidate answers are: {candidate_answers}")
+
         if candidate_answers and candidate_answers[0]["score"] > 0.70:
             answer = candidate_answers[0]["answer"]
         else:
