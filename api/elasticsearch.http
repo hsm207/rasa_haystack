@@ -1,0 +1,23 @@
+# get cluster health
+GET http://localhost:9200/_cluster/health
+
+###
+# list all indices
+GET http://localhost:9200/_cat/indices
+
+###
+# get docs in the document index
+GET http://localhost:9200/document/_search?pretty
+
+###
+# search for a virtual assistant
+GET http://localhost:9200/document/_search
+Content-Type: application/json
+
+{
+    "query": {
+        "term": {
+            "content": "voice"
+        }
+    }
+}
