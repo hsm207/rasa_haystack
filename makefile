@@ -26,5 +26,10 @@ run-bot:
 train-bot:
 	docker-compose -p faq exec rasa-server rasa train
 
+annotate:
+	# Need to do this twice the first time
+	# see: https://github.com/deepset-ai/haystack/issues/2356
+	cd haystack/annotation_tool && \
+		docker-compose up
 clean:
 	docker-compose -p faq down
