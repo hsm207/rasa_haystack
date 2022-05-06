@@ -12,3 +12,4 @@ tensorboard
 haystack
 .ipynb_checkpoints
 .vscode-server
+actions/mlruns/
