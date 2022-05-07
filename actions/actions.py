@@ -8,6 +8,7 @@ import wikipedia
 from haystack.document_stores import ElasticsearchDocumentStore
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
+from haystack.nodes import TextConverter, PDFToTextConverter, PreProcessor
 from haystack.utils import convert_files_to_dicts, clean_wiki_text
 
 logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
@@ -41,6 +42,16 @@ class ActionAnswerQuestion(Action):
     topics = ["Osteopathy", "Osteopathic medicine in the United States"]
 
     def __init__(self) -> None:
+        preprocessor = PreProcessor(
+            clean_empty_lines=True,
+            clean_whitespace=True,
+            clean_header_footer=False,
+            split_by="word",
+            split_length=100,
+            split_overlap=3,
+            split_respect_sentence_boundary=False,
+        )
+
         logger.debug(f"Creating {self.name()} custom action ...")
 
         with tempfile.TemporaryDirectory() as data_dir:
@@ -53,6 +64,9 @@ class ActionAnswerQuestion(Action):
 
             logger.info(f"Converting files in {data_dir} to haystack documents ...")
             docs = convert_articles_to_docs(data_dir)
+
+            logger.info(f"Preprocessing the haystack documents ...")
+            docs = preprocessor.process(docs)
 
             logger.info("Writing haystack documents to document store")
             self.doc_store.write_documents(docs)
