@@ -1,15 +1,15 @@
 import logging
 import tempfile
-from typing import Any, Dict, List, Text
 import urllib.request
+from typing import Any, Dict, List, Text
 
 import requests
 import wikipedia
 from haystack.document_stores import ElasticsearchDocumentStore
+from haystack.nodes import PreProcessor
+from haystack.utils import clean_wiki_text, convert_files_to_dicts
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
-from haystack.nodes import TextConverter, PDFToTextConverter, PreProcessor
-from haystack.utils import convert_files_to_dicts, clean_wiki_text
 
 logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
 logger = logging.getLogger(__name__)
@@ -21,12 +21,17 @@ def get_wikipedia_articles(data_dir, topics=[]):
         with open(f"{data_dir}/{topic}.txt", "w") as f:
             f.write(article)
 
+
 def get_pdf_files(data_dir):
-    fileurls = ["https://arxiv.org/pdf/2107.07567.pdf", "https://arxiv.org/pdf/2108.11463.pdf"]
+    fileurls = [
+        "https://arxiv.org/pdf/2107.07567.pdf",
+        "https://arxiv.org/pdf/2108.11463.pdf",
+    ]
     filenames = ["blenderbot.pdf", "bookings.pdf"]
 
     for fileurl, filename in zip(fileurls, filenames):
         urllib.request.urlretrieve(fileurl, f"{data_dir}/{filename}")
+
 
 def convert_articles_to_docs(data_dir):
     return convert_files_to_dicts(
