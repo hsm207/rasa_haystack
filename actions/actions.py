@@ -6,10 +6,9 @@ import urllib.request
 import requests
 import wikipedia
 from haystack.document_stores import ElasticsearchDocumentStore
-from haystack.preprocessor.cleaning import clean_wiki_text
-from haystack.preprocessor.utils import convert_files_to_dicts
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
+from haystack.utils import convert_files_to_dicts, clean_wiki_text
 
 logging.basicConfig(format="%(asctime)s %(message)s", datefmt="%m/%d/%Y %I:%M:%S %p")
 logger = logging.getLogger(__name__)
